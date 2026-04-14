@@ -4,14 +4,13 @@ import { motion } from "framer-motion";
 import { FileText, ExternalLink, Quote, Search } from "lucide-react";
 import type { SourceCitation } from "@/types/audit";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SourceAttributionProps {
   citations: SourceCitation[];
   activeControl: string;
 }
 
-export function SourceAttribution({ citations, activeControl }: SourceAttributionProps) {
+export function SourceAttribution({ citations }: SourceAttributionProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">

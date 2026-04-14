@@ -10,11 +10,29 @@ export type AuditStatus =
   | "COMPLETED"
   | "FAILED";
 export type RiskGrade = "A" | "B" | "C" | "D" | "F";
+export type AuditLens = "SECURITY" | "FINANCIAL" | "PRIVACY" | "HEALTHCARE" | "AGRICULTURE";
+
 export type RequiredControl =
   | "data_encryption"
   | "incident_response"
   | "multi_factor_authentication"
-  | "data_deletion_policy";
+  | "data_deletion_policy"
+  | "revenue_recognition"
+  | "budgetary_control"
+  | "ifrs_compliance"
+  | "internal_audit_logs"
+  | "data_sovereignty"
+  | "consent_management"
+  | "right_to_erasure"
+  | "third_party_sharing"
+  | "hipaa_compliance"
+  | "clinical_data_privacy"
+  | "medical_device_security"
+  | "ehr_interoperability"
+  | "supply_chain_traceability"
+  | "fair_trade_audit"
+  | "sustainability_reporting"
+  | "pesticide_logs_integrity";
 
 export interface SourceCitation {
   page_number: number;
@@ -41,6 +59,8 @@ export interface ScoreBreakdown {
   total_required_controls: number;
   base_score: number;
   total_penalties: number;
+  entity_risk_multiplier: number;
+  sentiment_adjustment: number;
   final_score: number;
   grade: RiskGrade;
   formula_repr: string;
@@ -51,6 +71,7 @@ export interface AuditResponse {
   vendor_id: string;
   vendor_name: string;
   audit_name: string;
+  audit_lens: AuditLens;
   status: AuditStatus;
   document_name: string;
   document_pages: number;
@@ -107,4 +128,5 @@ export interface AuditRunRequest {
   vendor_id: string;
   document_id: string;
   audit_name?: string;
+  audit_lens?: AuditLens;
 }

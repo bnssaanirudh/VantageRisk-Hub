@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Activity, Plus, Calculator, Zap } from "lucide-react";
-import type { ControlResult, AuditResponse, RiskGrade } from "@/types/audit";
+import { Zap } from "lucide-react";
+import type { AuditResponse, RiskGrade } from "@/types/audit";
 import { Badge } from "@/components/ui/badge";
 
 interface WhatIfAnalysisProps {

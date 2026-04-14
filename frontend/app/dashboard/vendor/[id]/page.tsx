@@ -12,15 +12,12 @@ import {
   FileText,
   Calendar,
   Building2,
-  ExternalLink,
   Loader2
 } from "lucide-react";
 import { vendorsApi, auditApi } from "@/lib/api";
-import type { VendorRead, AuditResponse, RequiredControl } from "@/types/audit";
+import type { VendorRead, AuditResponse, RequiredControl, AuditLens } from "@/types/audit";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { ScoreGauge } from "@/components/dashboard/ScoreGauge";
 import { ComplianceGapList } from "@/components/dashboard/ComplianceGapList";
@@ -44,6 +41,7 @@ export default function VendorProfilePage() {
 
   useEffect(() => {
     loadVendor();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vendorId]);
 
   const loadVendor = async () => {
@@ -58,7 +56,7 @@ export default function VendorProfilePage() {
     }
   };
 
-  const handleUploadSuccess = async (documentId: string, filename: string) => {
+  const handleUploadSuccess = async (documentId: string) => {
     setAnalyzing(true);
     try {
       const result = await auditApi.run({

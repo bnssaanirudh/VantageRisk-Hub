@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, Zap, BarChart3, FileSearch, ArrowRight, CheckCircle, BrainCircuit, Globe, Activity } from "lucide-react";
+import { Shield, Zap, BarChart3, FileSearch, ArrowRight, BrainCircuit, Globe, Activity } from "lucide-react";
 import Link from "next/link";
 import { BRAND_CONFIG } from "@/lib/brand";
 
