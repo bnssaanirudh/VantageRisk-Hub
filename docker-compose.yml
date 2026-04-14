@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: vendguard-db
+    environment:
+      POSTGRES_USER: vendguard
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vendguard
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vendguard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: vendguard-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://vendguard:password@db:5432/vendguard
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ALLOWED_ORIGINS=["http://localhost:3000"]
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/faiss_index:/app/faiss_index
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: vendguard-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
