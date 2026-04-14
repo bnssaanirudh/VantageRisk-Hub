@@ -116,7 +116,7 @@ function ControlCard({
                     Evidence Found
                   </p>
                   <p className="text-sm text-slate-300 italic leading-relaxed">
-                    "{control.evidence}"
+                    &quot;{control.evidence}&quot;
                   </p>
                 </div>
               )}
@@ -127,7 +127,7 @@ function ControlCard({
                   </p>
                   <p className="text-sm text-slate-400">
                     No explicit evidence of this control was found. Marked as HIGH RISK per
-                    VendGuard's Zero-Hallucination policy.
+                    VendGuard&apos;s Zero-Hallucination policy.
                   </p>
                 </div>
               )}

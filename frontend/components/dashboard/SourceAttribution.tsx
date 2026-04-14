@@ -74,7 +74,7 @@ export function SourceAttribution({ citations, activeControl }: SourceAttributio
   );
 }
 
-function Info(props: any) {
+function Info(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

@@ -72,6 +72,15 @@ export interface VendorRead {
   latest_score: number | null;
   latest_grade: RiskGrade | null;
   audit_count: number;
+  audit_history?: {
+    report_id: string;
+    audit_name: string;
+    status: AuditStatus;
+    final_score: number | null;
+    grade: RiskGrade | null;
+    created_at: string;
+    completed_at: string | null;
+  }[];
 }
 
 export interface VendorList {

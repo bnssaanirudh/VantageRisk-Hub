@@ -26,6 +26,8 @@ import { ScoreGauge } from "@/components/dashboard/ScoreGauge";
 import { ComplianceGapList } from "@/components/dashboard/ComplianceGapList";
 import { SourceAttribution } from "@/components/dashboard/SourceAttribution";
 import { DocumentUploader } from "@/components/upload/DocumentUploader";
+import { WhatIfAnalysis } from "@/components/dashboard/WhatIfAnalysis";
+
 
 export default function VendorProfilePage() {
   const params = useParams();
@@ -37,6 +39,8 @@ export default function VendorProfilePage() {
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [activeControlId, setActiveControlId] = useState<RequiredControl | null>(null);
+  const [auditLens, setAuditLens] = useState<AuditLens>("SECURITY");
+
 
   useEffect(() => {
     loadVendor();
@@ -60,8 +64,10 @@ export default function VendorProfilePage() {
       const result = await auditApi.run({
         vendor_id: vendorId,
         document_id: documentId,
-        audit_name: `${vendor?.name} Compliance Audit`
+        audit_name: `${vendor?.name} ${auditLens} Audit`,
+        audit_lens: auditLens
       });
+
       setReport(result);
       if (result.control_results.length > 0) {
         setActiveControlId(result.control_results[0].control_id);
@@ -96,10 +102,21 @@ export default function VendorProfilePage() {
     );
   }
 
+  const handleExportPDF = () => {
+    window.print();
+  };
+
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      alert("✓ Report link copied to clipboard!");
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-[#080B14] bg-mesh p-6 md:p-8">
+    <div className="min-h-screen bg-[#080B14] bg-mesh p-6 md:p-8 print:bg-white print:p-0">
       {/* Header */}
-      <nav className="flex items-center justify-between mb-8">
+      <nav className="flex items-center justify-between mb-8 print:hidden">
         <div className="flex items-center gap-4">
           <Button 
             variant="ghost" 
@@ -120,10 +137,18 @@ export default function VendorProfilePage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-slate-500 hover:text-white hover:bg-white/5">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={handleShare}
+            className="text-slate-500 hover:text-white hover:bg-white/5"
+          >
             <Share2 className="w-4 h-4" />
           </Button>
-          <Button className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300">
+          <Button 
+            onClick={handleExportPDF}
+            className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300"
+          >
             <Download className="w-4 h-4 mr-2" />
             Export PDF
           </Button>
@@ -182,7 +207,7 @@ export default function VendorProfilePage() {
                   </div>
                 </div>
                 <div className="mt-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 italic text-xs text-slate-400 w-full text-center">
-                  " {report.score_breakdown.formula_repr} "
+                  &quot; {report.score_breakdown.formula_repr} &quot;
                 </div>
               </Card>
 
@@ -213,7 +238,12 @@ export default function VendorProfilePage() {
                   </div>
                 </div>
               </Card>
+
+              <Card className="glass p-6 border-white/5 bg-amber-500/[0.02] print-hidden">
+                <WhatIfAnalysis report={report} />
+              </Card>
             </div>
+
 
             {/* Middle Column — Controls List */}
             <div className="col-span-12 lg:col-span-5">
@@ -226,13 +256,76 @@ export default function VendorProfilePage() {
               </Card>
             </div>
 
-            {/* Right Column — Source Attribution */}
-            <div className="col-span-12 lg:col-span-3">
-              <Card className="glass p-6 border-white/5 h-full bg-white/[0.02]">
+            {/* Right Column — Source Attribution & History */}
+            <div className="col-span-12 lg:col-span-3 space-y-6">
+              <Card className="glass p-6 border-white/5 bg-white/[0.02]">
                 <SourceAttribution citations={activeCitations} activeControl={activeControlId || ""} />
+              </Card>
+
+              <Card className="glass p-6 border-white/5 space-y-6 print-hidden">
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <History className="w-3 h-3" />
+                    Audit History
+                  </h4>
+                  <div className="space-y-2">
+                    {vendor.audit_history && vendor.audit_history.length > 0 ? (
+                      vendor.audit_history.map((h) => (
+                        <button
+                          key={h.report_id}
+                          onClick={async () => {
+                            setLoading(true);
+                            try {
+                              const fullReport = await auditApi.get(h.report_id);
+                              setReport(fullReport);
+                            } catch (e) {
+                              console.error(e);
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                          className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors text-left ${
+                            report?.report_id === h.report_id ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-white/5 hover:bg-white/10'
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <p className="text-[11px] text-slate-300 font-medium truncate">{h.audit_name}</p>
+                            <p className="text-[10px] text-slate-500">{new Date(h.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <Badge className={`text-[9px] ${
+                            h.grade === 'A' ? 'bg-green-500/20 text-green-400' :
+                            h.grade === 'F' ? 'bg-red-500/20 text-red-400' : 'bg-slate-500/20 text-slate-400'
+                          }`}>
+                            {h.grade || '-'}
+                          </Badge>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-slate-600 italic">No previous audits found.</p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <Building2 className="w-3 h-3" />
+                    Vendor Metadata
+                  </h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                      <p className="text-[9px] text-slate-500 uppercase font-bold mb-0.5">Industry</p>
+                      <p className="text-[11px] text-slate-300">{vendor.industry || "General Technology"}</p>
+                    </div>
+                    <div className="p-2 rounded-lg bg-white/5 border border-white/5">
+                      <p className="text-[9px] text-slate-500 uppercase font-bold mb-0.5">Contact</p>
+                      <p className="text-[11px] text-slate-300 font-mono">{vendor.contact_email || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
               </Card>
             </div>
           </motion.div>
+
         ) : (
           <motion.div
             key="uploader"
@@ -243,31 +336,84 @@ export default function VendorProfilePage() {
             <div className="text-center mb-8">
               <h2 className="text-2xl font-bold text-white leading-tight">Begin Risk Assessment</h2>
               <p className="text-slate-500 text-sm mt-2 leading-relaxed">
-                VendGuard's RAG pipeline requires the latest security policy or SOC 2 document to perform a deterministic audit.
+                VendGuard&apos;s RAG pipeline requires the latest security policy or SOC 2 document to perform a deterministic audit.
               </p>
             </div>
+
+            <div className="mb-8 grid grid-cols-3 gap-2 p-1 bg-white/5 border border-white/5 rounded-2xl">
+              {(["SECURITY", "FINANCIAL", "PRIVACY"] as AuditLens[]).map((lens) => (
+                <button
+                  key={lens}
+                  onClick={() => setAuditLens(lens)}
+                  className={`py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
+                    auditLens === lens 
+                      ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                      : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                  }`}
+                >
+                  {lens}
+                </button>
+              ))}
+            </div>
+
             <DocumentUploader vendorId={vendorId} onSuccess={handleUploadSuccess} />
-            
+
             <div className="mt-12 grid grid-cols-2 gap-4">
               <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
                 <History className="w-5 h-5 text-slate-600 mb-3" />
                 <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-1">Audit History</h4>
-                <p className="text-[10px] text-slate-500 leading-normal">No previous audits found for this vendor.</p>
+                <div className="space-y-2 mt-2">
+                  {vendor.audit_history && vendor.audit_history.length > 0 ? (
+                    vendor.audit_history.slice(0, 3).map((h) => (
+                      <button
+                        key={h.report_id}
+                        onClick={async () => {
+                          setLoading(true);
+                          try {
+                            const fullReport = await auditApi.get(h.report_id);
+                            setReport(fullReport);
+                          } catch (e) {
+                            console.error(e);
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="w-full flex items-center justify-between text-[10px] hover:bg-white/5 p-1 rounded transition-colors group"
+                      >
+                        <span className="text-slate-400 truncate max-w-[120px] group-hover:text-blue-400">{h.audit_name}</span>
+                        <span className="text-slate-500">{new Date(h.created_at).toLocaleDateString()}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <p className="text-[10px] text-slate-600 leading-normal">No previous audits found for this vendor.</p>
+                  )}
+                </div>
               </div>
               <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
                 <Building2 className="w-5 h-5 text-slate-600 mb-3" />
                 <h4 className="text-xs font-bold text-slate-300 uppercase tracking-widest mb-1">Vendor Metadata</h4>
-                <p className="text-[10px] text-slate-500 leading-normal">Compliance tier: Level 1 Basic Assessment</p>
+                <div className="mt-2 space-y-1">
+                  <p className="text-[10px] text-slate-500 leading-normal">
+                    Industry: <span className="text-slate-300">{vendor.industry || "General"}</span>
+                  </p>
+                  <p className="text-[10px] text-slate-500 leading-normal">
+                    Contact: <span className="text-slate-300 font-mono text-[9px]">{vendor.contact_email || "N/A"}</span>
+                  </p>
+                  <p className="text-[10px] text-slate-500 leading-normal">
+                    Since: <span className="text-slate-300">{new Date(vendor.created_at).toLocaleDateString()}</span>
+                  </p>
+                </div>
               </div>
             </div>
           </motion.div>
+
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function ShieldCheck(props: any) {
+function ShieldCheck(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

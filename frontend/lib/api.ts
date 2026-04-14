@@ -26,10 +26,21 @@ async function request<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("vr_token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+  }
+
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...headers,
       ...options.headers,
     },
   });
@@ -65,9 +76,18 @@ export const auditApi = {
     formData.append("file", file);
     formData.append("vendor_id", vendorId);
 
+    const headers: Record<string, string> = {};
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("vr_token");
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+    }
+
     const response = await fetch(`${BASE_URL}/api/v1/audit/upload`, {
       method: "POST",
       body: formData,
+      headers,
       // Don't set Content-Type — browser sets multipart boundary automatically
     });
 

@@ -43,10 +43,10 @@ def get_llm() -> ChatGoogleGenerativeAI:
             rate_limiter=_rate_limiter,
             # Safety settings — loosen for compliance content 
             safety_settings={
-                "HARASSMENT": "BLOCK_NONE",
-                "HATE_SPEECH": "BLOCK_NONE",
-                "DANGEROUS_CONTENT": "BLOCK_NONE",
-                "SEXUALLY_EXPLICIT": "BLOCK_NONE",
+                "HARM_CATEGORY_HARASSMENT": "BLOCK_NONE",
+                "HARM_CATEGORY_HATE_SPEECH": "BLOCK_NONE",
+                "HARM_CATEGORY_DANGEROUS_CONTENT": "BLOCK_NONE",
+                "HARM_CATEGORY_SEXUALLY_EXPLICIT": "BLOCK_NONE",
             },
         )
         logger.info("Gemini client initialised: model=%s", settings.gemini_model)

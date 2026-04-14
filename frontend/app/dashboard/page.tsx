@@ -12,20 +12,38 @@ import {
   ArrowUpRight,
   TrendingUp,
   LayoutGrid,
-  List
+  List,
+  LogOut,
+  UserCircle
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { vendorsApi } from "@/lib/api";
 import type { VendorRead } from "@/types/audit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { AddVendorModal } from "@/components/dashboard/AddVendorModal";
+import { useAuth } from "@/lib/auth";
+
 
 export default function DashboardPage() {
+  const { user, loading: authLoading, logout } = useAuth();
+  const router = useRouter();
   const [vendors, setVendors] = useState<VendorRead[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  // Auth guard — redirect to login if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/auth");
+    }
+  }, [authLoading, user, router]);
+
 
   useEffect(() => {
     loadVendors();
@@ -65,16 +83,39 @@ export default function DashboardPage() {
           <p className="text-slate-500 mt-1">Real-time compliance monitoring and risk intelligence.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button className="bg-white/5 hover:bg-white/10 border-white/10 text-slate-300">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Trends
-          </Button>
-          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 border-none">
+          <Link href="/dashboard/trends">
+            <Button className="bg-white/5 hover:bg-white/10 border-white/10 text-slate-300">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Trends
+            </Button>
+          </Link>
+          <Button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 border-none"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Vendor
           </Button>
+          {user && (
+            <div className="flex items-center gap-2 ml-2 pl-3 border-l border-white/10">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-xs font-bold">
+                {user.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs text-slate-400 hidden lg:block max-w-[100px] truncate">{user.name}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => { logout(); router.push("/auth"); }}
+                className="h-8 w-8 text-slate-500 hover:text-red-400 hover:bg-red-500/10"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </header>
+
 
       {/* Stats Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -119,10 +160,20 @@ export default function DashboardPage() {
             />
           </div>
           <div className="flex items-center gap-2 p-1 bg-white/5 rounded-lg border border-white/5">
-            <Button variant="ghost" size="icon" className="h-8 w-8 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setViewMode('grid')}
+              className={`h-8 w-8 transition-all ${viewMode === 'grid' ? 'bg-blue-500/20 text-blue-400' : 'text-slate-500 hover:text-white'}`}
+            >
               <LayoutGrid className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500 hover:text-white">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setViewMode('list')}
+              className={`h-8 w-8 transition-all ${viewMode === 'list' ? 'bg-blue-500/20 text-blue-400' : 'text-slate-500 hover:text-white'}`}
+            >
               <List className="w-4 h-4" />
             </Button>
           </div>
@@ -138,7 +189,7 @@ export default function DashboardPage() {
           <div className="py-20 text-center">
             <p className="text-slate-500 italic">No vendors found matching your search.</p>
           </div>
-        ) : (
+        ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredVendors.map((vendor, i) => (
               <motion.div
@@ -187,8 +238,59 @@ export default function DashboardPage() {
               </motion.div>
             ))}
           </div>
+        ) : (
+          <div className="space-y-3">
+            {filteredVendors.map((vendor, i) => (
+              <motion.div
+                key={vendor.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <Link href={`/dashboard/vendor/${vendor.id}`}>
+                  <div className="group glass p-4 border-white/5 hover:border-blue-500/30 hover:bg-white/[0.07] transition-all cursor-pointer flex items-center justify-between rounded-xl">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-slate-400">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-white group-hover:text-blue-400 transition-colors">{vendor.name}</h3>
+                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{vendor.industry || "General"}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-8">
+                      <div className="text-center hidden md:block">
+                        <p className="text-[10px] text-slate-500 uppercase font-bold">Audits</p>
+                        <p className="text-xs text-white font-mono">{vendor.audit_count}</p>
+                      </div>
+                      <div className="text-center hidden md:block">
+                        <p className="text-[10px] text-slate-500 uppercase font-bold">Member Since</p>
+                        <p className="text-xs text-white font-mono">{new Date(vendor.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         {vendor.latest_score !== null && (
+                           <div className="text-right">
+                             <span className={`text-lg font-bold grade-${vendor.latest_grade}`}>{vendor.latest_score}%</span>
+                           </div>
+                         )}
+                         <ArrowUpRight className="w-4 h-4 text-slate-600 group-hover:text-white" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         )}
       </div>
+
+      <AddVendorModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={loadVendors}
+      />
+
     </div>
   );
 }

@@ -71,11 +71,11 @@ export default function LandingPage() {
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
           <Link href="#features" className="hover:text-white transition-colors">Features</Link>
           <Link href="#how-it-works" className="hover:text-white transition-colors">Methodology</Link>
-          <Link href="/dashboard" className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white">
+          <Link href="/auth" className="px-5 py-2.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-white">
             Sign In
           </Link>
           <Link
-            href="/dashboard"
+            href="/auth"
             className="px-6 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-105 transition-all shadow-lg shadow-blue-500/20"
           >
             Launch Platform
@@ -109,7 +109,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Link
-              href="/dashboard"
+              href="/auth"
               className="group w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-5 rounded-2xl bg-white text-black font-bold text-lg hover:bg-blue-50 transition-all hover:-translate-y-1 shadow-2xl shadow-white/10"
             >
               Start Auditing
@@ -196,7 +196,7 @@ export default function LandingPage() {
           <div className="max-w-2xl">
             <h2 className="text-5xl font-extrabold tracking-tighter mb-6">Strategic Intelligence</h2>
             <p className="text-blue-100/60 text-lg leading-relaxed">
-              Experience the inner monologue of our agentic workflow. VantageRisk Hub doesn't just produce a score; 
+              Experience the inner monologue of our agentic workflow. VantageRisk Hub doesn&apos;t just produce a score; 
               it provides a <span className="text-emerald-400">traceable chain of reasoning</span> from global polyglot ingestion to final risk mitigation.
             </p>
           </div>

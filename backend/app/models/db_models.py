@@ -30,6 +30,20 @@ def _uuid() -> str:
     return str(uuid.uuid4())
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    email: Mapped[str] = mapped_column(String(200), nullable=False, unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    hashed_password: Mapped[str] = mapped_column(String(300), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    def __repr__(self) -> str:
+        return f"<User id={self.id} email={self.email!r}>"
+
 class Vendor(Base):
     __tablename__ = "vendors"
 

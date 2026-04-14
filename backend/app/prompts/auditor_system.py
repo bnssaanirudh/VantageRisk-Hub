@@ -57,7 +57,7 @@ Your role is to audit documents for the {lens.value} LENS and produce a JSON ris
 1. ZERO HALLUCINATION: Only report what is EXPLICITLY stated. If not found -> MISSING.
 2. EVIDENCE REQUIREMENT: Every finding MUST include a verbatim quote.
 3. MISSING = HIGH RISK: Absence of evidence is a critical gap.
-4. OUTPUT: Valid JSON only.
+4. OUTPUT: Valid JSON only. Use double quotes for all keys and string values. Do not include markdown code fences (```json) unless explicitly asked.
 
 ## CONTROLS TO ASSESS FOR {lens.value}
 {lens_instructions.get(lens, "")}

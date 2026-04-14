@@ -12,7 +12,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.db_models import AuditReport, ControlFinding, Vendor
-from app.models.enums import AuditStatus, RiskGrade
+from app.models.enums import AuditLens, AuditStatus, RiskGrade
 from app.models.schemas import AuditResponse, ControlResult, ScoreBreakdown, VendorRead
 
 logger = logging.getLogger(__name__)

@@ -51,7 +51,8 @@ export function DocumentUploader({ vendorId, onSuccess }: DocumentUploaderProps)
       setTimeout(() => {
         onSuccess(response.document_id, file.name);
       }, 500);
-    } catch (err: any) {
+    } catch (error) {
+      const err = error as Error;
       clearInterval(interval);
       setError(err.message || "Upload failed. Please try again.");
       setUploading(false);

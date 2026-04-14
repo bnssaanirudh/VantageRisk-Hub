@@ -36,9 +36,9 @@ class Settings(BaseSettings):
 
     # ── Gemini / LangChain ────────────────────────────────────────────────────
     gemini_api_key: str = Field(..., description="Google AI Studio API key")
-    gemini_model: str = "gemini-1.5-pro"
+    gemini_model: str = "gemini-flash-latest"
     gemini_temperature: float = Field(default=0.0, ge=0.0, le=1.0)
-    embedding_model: str = "models/text-embedding-004"
+    embedding_model: str = "models/gemini-embedding-001"
 
     # ── RAG / Chunking ────────────────────────────────────────────────────────
     chunk_size: int = 1000
@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     # ── File Upload ───────────────────────────────────────────────────────────
     max_upload_size_mb: int = 50
     upload_dir: str = "./uploads"
+
+    # ── Auth / JWT ────────────────────────────────────────────────────────────
+    jwt_secret: str = Field(default="vendguard-super-secret-key-change-in-prod", description="JWT signing secret")
+    jwt_expiry_hours: int = 24
 
     @field_validator("upload_dir", mode="after")
     @classmethod

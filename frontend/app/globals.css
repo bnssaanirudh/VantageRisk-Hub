@@ -93,3 +93,29 @@ body {
 .grade-C { color: #F59E0B; }
 .grade-D { color: #F97316; }
 .grade-F { color: #EF4444; }
+
+@media print {
+  body {
+    background: white !important;
+    color: #080B14 !important;
+  }
+  .glass {
+    background: white !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+  .bg-mesh, .glow-blue, .glow-purple, .glow-red {
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+  h1, h2, h3, h4, p, span, div {
+    color: #080B14 !important;
+  }
+  .print-hidden {
+    display: none !important;
+  }
+  .print\:bg-white {
+    background: white !important;
+  }
+}

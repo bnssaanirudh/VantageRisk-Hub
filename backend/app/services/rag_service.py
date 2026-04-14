@@ -12,14 +12,14 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.core.llm_client import get_llm
 from app.core.vector_store import get_vector_store
-from app.models.enums import ControlStatus, RequiredControl, RiskLevel
+from app.models.enums import AuditLens, ControlStatus, RequiredControl, RiskLevel
 from app.models.schemas import (
     ControlResult,
     LLMAuditOutput,
     LLMControlFinding,
     SourceCitation,
 )
-from app.prompts.auditor_system import AUDITOR_SYSTEM_PROMPT, REQUIRED_CONTROLS
+
 
 logger = logging.getLogger(__name__)
 
@@ -239,7 +239,17 @@ class RAGService:
             HumanMessage(content=human_prompt),
         ]
         response = await self._llm.ainvoke(messages)
-        return str(response.content)
+        content = response.content
+        if isinstance(content, list):
+            # Extract text from all text blocks
+            full_text = []
+            for block in content:
+                if isinstance(block, dict) and block.get("type") == "text":
+                    full_text.append(block.get("text", ""))
+                elif isinstance(block, str):
+                    full_text.append(block)
+            return "".join(full_text)
+        return str(content)
 
     def _parse_llm_response(self, raw_response: str, lens: AuditLens) -> LLMAuditOutput:
         """
@@ -248,14 +258,28 @@ class RAGService:
         from app.prompts.auditor_system import LENS_CONTROLS
         try:
             clean = raw_response.strip()
-            if clean.startswith("```"):
-                clean = clean.split("```")[1]
-                if clean.startswith("json"):
-                    clean = clean[4:]
+            # Remove markdown code blocks if present
+            if "```" in clean:
+                # Extract content between the first and last ```
+                parts = clean.split("```")
+                for part in parts:
+                    if part.strip().startswith("{") or part.strip().startswith("["):
+                        clean = part.strip()
+                        if clean.startswith("json"):
+                            clean = clean[4:].strip()
+                        break
+            
+            # Remove any trailing/leading text outside the first { and last }
+            start = clean.find("{")
+            end = clean.rfind("}")
+            if start != -1 and end != -1:
+                clean = clean[start : end + 1]
+
             data: dict[str, Any] = json.loads(clean)
         except json.JSONDecodeError as exc:
-            logger.error("LLM returned non-JSON response: %s", exc)
+            logger.error("LLM returned non-JSON response: %s | Raw response: %s", exc, raw_response)
             data = {"controls": [], "executive_summary": "Parsing error. All controls marked MISSING."}
+
 
         # Ensure all lens-specific controls are present
         controls_metadata = LENS_CONTROLS.get(lens, [])
