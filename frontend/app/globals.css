@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #080B14;
+  --foreground: #E8EAF0;
+  --card: #0E1221;
+  --card-foreground: #E8EAF0;
+  --border: rgba(99, 120, 180, 0.15);
+  --primary: #4F7FFF;
+  --primary-foreground: #ffffff;
+
+  /* Brand gradient */
+  --gradient-primary: linear-gradient(135deg, #4F7FFF 0%, #8B5CF6 100%);
+  --gradient-danger: linear-gradient(135deg, #FF4F4F 0%, #FF8C42 100%);
+  --gradient-success: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  --gradient-warning: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+
+  /* Glass */
+  --glass-bg: rgba(14, 18, 33, 0.6);
+  --glass-border: rgba(99, 120, 180, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(79, 127, 255, 0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(79, 127, 255, 0.6); }
+
+/* Background mesh gradient */
+.bg-mesh {
+  background-image:
+    radial-gradient(ellipse 80% 80% at 50% -20%, rgba(79, 127, 255, 0.15), transparent),
+    radial-gradient(ellipse 50% 80% at 80% 50%, rgba(139, 92, 246, 0.08), transparent);
+}
+
+/* Glass card */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Bento grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+
+/* Glow effects */
+.glow-blue { box-shadow: 0 0 30px rgba(79, 127, 255, 0.15); }
+.glow-purple { box-shadow: 0 0 30px rgba(139, 92, 246, 0.15); }
+.glow-red { box-shadow: 0 0 30px rgba(239, 68, 68, 0.2); }
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.03) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* Pulse ring */
+@keyframes ping-slow {
+  75%, 100% { transform: scale(1.8); opacity: 0; }
+}
+.ping-slow { animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+/* Grade colors */
+.grade-A { color: #22C55E; }
+.grade-B { color: #84CC16; }
+.grade-C { color: #F59E0B; }
+.grade-D { color: #F97316; }
+.grade-F { color: #EF4444; }
