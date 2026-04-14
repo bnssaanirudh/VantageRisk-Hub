@@ -1,13 +1,13 @@
 /**
- * IncomeLens AI — Brand Design Tokens
+ * VantageRisk Hub — Brand Design Tokens
  * ==========================================
  * Standardized color palette and visual tokens for the "Winning" aesthetic.
  * These are used across the landing page and dashboard components.
  */
 
 export const BRAND_CONFIG = {
-  name: "IncomeLens AI",
-  tagline: "Enterprise Risk & Intelligence Platform",
+  name: "VantageRisk Hub",
+  tagline: "Global Enterprise Risk & Intelligence Hub",
   colors: {
     background: "#080B14",
     surface: "rgba(255, 255, 255, 0.05)",

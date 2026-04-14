@@ -1,7 +1,7 @@
-# IncomeLens AI — Technical Architecture
+# VantageRisk Hub — Technical Architecture
 
 ## 1. High-Level Design
-IncomeLens AI is built as a highly decoupled, asynchronous enterprise platform. It leverages **FastAPI** for high-performance backend logic and **Next.js 14** for a premium, low-latency frontend experience.
+VantageRisk Hub is built as a highly decoupled, asynchronous enterprise platform. It leverages **FastAPI** for high-performance backend logic and **Next.js 14** for a premium, low-latency frontend experience.
 
 ## 2. The Intelligence Pipeline (RAG 2.0)
 Our RAG (Retrieval-Augmented Generation) pipeline is designed for **Zero-Hallucination** compliance auditing.
@@ -50,3 +50,4 @@ sequenceDiagram
 
 ---
 *Document Version: 1.0.0 — Hackathon Submission Release*
+

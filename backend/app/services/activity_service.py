@@ -1,5 +1,5 @@
 """
-IncomeLens AI — Activity Intelligence Stream
+AetherAudit — Activity Intelligence Stream
 ============================================================
 Tracks and simulates the 'Intelligence Trail' of the agentic workflow.
 Useful for demonstrating real-time audit logs and enterprise visibility.
@@ -37,3 +37,5 @@ class ActivityService:
             ActivityEvent(event_type="REMEDIATION", message="Remediation Agent drafting fix strategies for 'MFA' gap."),
             ActivityEvent(event_type="FINALIZE", message=f"Audit complete for {vendor_name}. Final Grade: B+."),
         ]
+
+

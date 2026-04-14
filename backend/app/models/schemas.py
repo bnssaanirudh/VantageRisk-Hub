@@ -111,7 +111,7 @@ class AuditRunRequest(VendGuardBase):
 
 
 class AuditResponse(VendGuardBase):
-    """Complete audit result — the core payload of IncomeLens AI."""
+    """Complete audit result — the core payload of AetherAudit."""
     report_id: UUID
     vendor_id: UUID
     vendor_name: str
@@ -161,3 +161,5 @@ class LLMAuditOutput(BaseModel):
     """Top-level structured output from the AI Auditor."""
     controls: list[LLMControlFinding]
     executive_summary: str
+
+

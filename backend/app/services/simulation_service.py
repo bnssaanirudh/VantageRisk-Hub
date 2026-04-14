@@ -1,5 +1,5 @@
 """
-IncomeLens AI — Strategic Simulation Engine
+AetherAudit — Strategic Simulation Engine
 ============================================================
 Allows "What-If" risk modeling by simulating remediation steps.
 Computes projected scores based on GAT-inspired math without mutating original audit reports.
@@ -50,3 +50,5 @@ class SimulationService:
             projected_breakdown=scoring_out.breakdown,
             improvement_delta=scoring_out.breakdown.final_score
         )
+
+

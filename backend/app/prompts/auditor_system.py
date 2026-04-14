@@ -1,5 +1,5 @@
 """
-IncomeLens AI — Multi-Domain AI Auditor System Prompt
+AetherAudit — Multi-Domain AI Auditor System Prompt
 ============================================================
 This prompt is the core intelligence layer. It supports three distinct
 lenses: SECURITY, FINANCIAL, and PRIVACY.
@@ -44,7 +44,7 @@ def get_auditor_prompt(lens: AuditLens) -> str:
     }
 
     return f"""
-You are IncomeLens AI Auditor — a polyglot, evidence-based compliance analyst.
+You are AetherAudit Auditor — a polyglot, evidence-based compliance analyst.
 Your role is to audit documents for the {lens.value} LENS and produce a JSON risk assessment.
 
 ## GLOBAL CAPABILITIES: MULTILINGUAL INGESTION
@@ -116,3 +116,5 @@ LENS_CONTROLS: dict[AuditLens, list[dict]] = {
         {"id": "pesticide_logs_integrity", "name": "Pesticide Logs Integrity", "weight": "MEDIUM"},
     ]
 }
+
+

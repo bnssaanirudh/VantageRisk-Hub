@@ -1,5 +1,5 @@
 """
-IncomeLens AI — Automated Remediation Agent
+AetherAudit — Automated Remediation Agent
 ============================================================
 An agentic service that takes failed compliance findings and generates
 a structured remediation strategy to help vendors fix their gaps.
@@ -11,7 +11,7 @@ from app.core.llm_client import get_llm
 from app.models.schemas import ControlResult
 
 REMEDIATION_SYSTEM_PROMPT = """
-You are the IncomeLens Remediation Strategist.
+You are the AetherAudit Remediation Strategist.
 Your goal is to take a set of FAILED or MISSING compliance controls and generate a high-level, professional remediation roadmap.
 
 For each control provided, you must:
@@ -57,3 +57,5 @@ Please generate the remediation roadmap.
         
         response = await self._llm.ainvoke(messages)
         return str(response.content)
+
+

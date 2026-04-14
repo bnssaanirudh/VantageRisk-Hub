@@ -196,7 +196,7 @@ export default function LandingPage() {
           <div className="max-w-2xl">
             <h2 className="text-5xl font-extrabold tracking-tighter mb-6">Strategic Intelligence</h2>
             <p className="text-blue-100/60 text-lg leading-relaxed">
-              Experience the inner monologue of our agentic workflow. IncomeLens doesn't just produce a score; 
+              Experience the inner monologue of our agentic workflow. VantageRisk Hub doesn't just produce a score; 
               it provides a <span className="text-emerald-400">traceable chain of reasoning</span> from global polyglot ingestion to final risk mitigation.
             </p>
           </div>
@@ -305,3 +305,4 @@ export default function LandingPage() {
     </main>
   );
 }
+
